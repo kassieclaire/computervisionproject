@@ -27,7 +27,7 @@ title('Red Channel Image', 'FontSize', fontSize);
 drawnow;
 
 % Do the Radon transform.
-theta = 0:180;
+theta = 0:0.5:180;
 [R,xp] = radon(grayImage,theta);
 % Find the location of the peak of the radon transform image.
 maxR = max(R(:));
@@ -39,13 +39,16 @@ imshow(R,[],'Xdata',theta,'Ydata',xp,...
 axis on;
 % Plot a blue circle over the max.
 hold on;
-plot(h3, columnOfMax, xp(rowOfMax), 'bo', 'MarkerSize', 30, 'LineWidth', 3);
+plot(h3, columnOfMax, xp(rowOfMax), 'bo', 'MarkerSize', 3, 'LineWidth', 3);
 line([columnOfMax, columnOfMax], [xp(end), xp(rowOfMax)+15], 'Color', 'b', 'LineWidth', 3);
 caption = sprintf('Radon Transform.  Max at angle %.1f', columnOfMax);
 title(caption, 'FontSize', fontSize);
 xlabel('\theta (degrees)', 'FontSize', fontSize)
 ylabel('x''', 'FontSize', fontSize)
 colormap(h3, hot(256));
+
+
+
 colorbar;
 drawnow;
 
@@ -66,3 +69,25 @@ subplot(2, 3, 5);
 imshow(rotatedImage);
 axis on;
 title('Rotated Color Image', 'FontSize', fontSize);
+
+%Display the Radon Transform image on its own figure
+f = figure;
+%scale the x axis
+xScale = 20;
+%resize R
+R = imresize(R, [size(R,1), size(R,2)*xScale]);
+imshow(R,[],'Xdata',theta,'Ydata',xp,...
+            'InitialMagnification','fit')
+axis on;
+% Set aspect ratio to 1:1
+set(gca, 'DataAspectRatio', [1 xScale 1]);
+% Plot a blue circle over the max.
+hold on;
+plot(columnOfMax, xp(rowOfMax), 'bo', 'MarkerSize', 3, 'LineWidth', 3);
+line([columnOfMax, columnOfMax], [xp(end), xp(rowOfMax)+15], 'Color', 'b', 'LineWidth', 3);
+caption = sprintf('Radon Transform.  Max at angle %.1f', columnOfMax);
+title(caption, 'FontSize', fontSize);
+xlabel('\theta (degrees)', 'FontSize', fontSize)
+ylabel('x''', 'FontSize', fontSize)
+colormap(f, hot(256));
+%set the aspect ratio to 1

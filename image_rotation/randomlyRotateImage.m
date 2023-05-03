@@ -4,8 +4,8 @@ function rotatedImage = randomlyRotateImage(image)
     [rows, columns, numberOfColorChannels] = size(image); 
     %get the center of the image 
     centerRow = rows/2; centerColumn = columns/2; 
-    %get the angle of rotation 
-    angle = rand()*360; 
+    %get the angle of rotation (between -90 and 90 degrees)
+    angle = randi([-90, 90]);
     %rotate the image
     rotatedImage = imrotate(image, angle, 'bilinear');
 end
