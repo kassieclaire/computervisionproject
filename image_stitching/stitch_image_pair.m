@@ -63,8 +63,8 @@ impl = 'MATLAB';
 % Use RANSAC to reject outliers
 %ransac_n = ??; % Max number of iterations
 %ransac_eps = ??; Acceptable alignment error
-ransac_n = 10000;
-ransac_eps = 2;
+ransac_n = 100000;
+ransac_eps = 1;
 
 [inliers_id, H_3x3] = runRANSAC(xs, xd, ransac_n, ransac_eps);
 
