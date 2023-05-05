@@ -6,7 +6,7 @@ function final_image = main(folder_path, max_size, debug)
     %define parameters
     window_size = 4;
     outlier_threshold = 1.5;
-    num_bins = 2;
+    num_bins = 2; %not currently used
     max_rotation_angle = 5;
     % Load images from folder
     images = load_images(folder_path, max_size);
