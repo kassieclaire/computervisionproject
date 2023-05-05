@@ -19,4 +19,12 @@ function [aligned_images, masks] = sift_align(images)
     for i = 2:length(images)
         [aligned_images{i}, masks{i}] = align_image_pair(images{1}, images{i}, mask);
     end
+    %Other implementation: do a "binary search"-style alignment, where you do the following:
+    %1. Align the first image to the second image, third to fourth, etc.
+    %2. Align the first aligned result to the second, third to fourth, etc.
+    %3. Repeat until you have aligned all images.
+    %This is more robust to errors, but takes longer to run.
+    %get the number of implementations required
+    %If the number of images is even
+    
 end

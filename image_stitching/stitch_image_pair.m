@@ -63,12 +63,25 @@ impl = 'MATLAB';
 % Use RANSAC to reject outliers
 %ransac_n = ??; % Max number of iterations
 %ransac_eps = ??; Acceptable alignment error
-ransac_n = 100000;
-ransac_eps = 1;
+ransac_n = 10000;
+ransac_eps = 2;
 
 [inliers_id, H_3x3] = runRANSAC(xs, xd, ransac_n, ransac_eps);
 
-%after_img = showCorrespondence(imgs, imgd, xs(inliers_id, :), xd(inliers_id, :));
+after_img = showCorrespondence(imgs, imgd, xs(inliers_id, :), xd(inliers_id, :));
+%save the image to a file in the correspondence_images folder.
+%The name of the file should be correspondence_<num_correspondence>.png
+%first, figure out how many correspondence images are already in the folder
+%get the list of files in the correspondence_images folder
+correspondence_images = dir('correspondence_images/*.png');
+%now, get the number of files in the folder
+num_correspondence = size(correspondence_images, 1);
+%now, create the name of the file
+file_name = strcat('correspondence_images/correspondence_', num2str(num_correspondence+1), '.png');
+%print out the name of the file
+fprintf('Saving correspondence image to file %s\n', file_name);
+%now, save the image to the file
+imwrite(after_img, file_name);
 %figure, imshow(after_img);
 %create the name for the output image -- the name of the first image, followed by corresponding, followed by the name of the second image
 %out_img = strcat(img_name_1, '_corresponding_', img_name_2);

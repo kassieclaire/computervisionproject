@@ -2,7 +2,9 @@
 %Alignment is done using the function removeRotation. 
 %[imageWithRotationRemoved, rotationAngle] = removeRotation(rotatedImage, originalImage)
 %removeRotation is in the directory 'image_rotation'
-function [aligned_images, rotations] = align_image_rotation(images)
+function [aligned_images, rotations, figs] = align_image_rotation(images, max_rotation_angle)
+    %create a cell array to store the figures. There is one figure for each image
+    figs = {};
     %get the first image
     first_image = images{1};
     %prepare a cell array for the aligned images
@@ -17,10 +19,14 @@ function [aligned_images, rotations] = align_image_rotation(images)
         %get the current image
         current_image = images{i};
         %align the current image to the first image
-        [aligned_image, rotation] = removeRotation(current_image, first_image);
+        [aligned_image, rotation, orig_fig, rotated_fig] = removeRotation(current_image, first_image, max_rotation_angle);
         %store the aligned image
         aligned_images{i} = aligned_image;
         %store the rotation angle
         rotations(i) = rotation;
+        %store the rotated figure
+        figs{i} = rotated_fig;
     end
+    %store the original figure
+    figs{1} = orig_fig;
 end

@@ -3,6 +3,12 @@ function [result, mask] = align_image_pair(imgd, imgs, maskd)
     % Test RANSAC -- outlier rejection
     imgd_ransac = imgd;
     imgs_ransac = imgs;
+    %get the original width and height of the source image
+    source_width = size(imgs_ransac, 2);
+    source_height = size(imgs_ransac, 1);
+    %get the original width and height of the destination image
+    dest_width = size(imgd_ransac, 2);
+    dest_height = size(imgd_ransac, 1);
     %imgd_ransac = imread(img_name_1); %destination image -- the image that will be used as the starting point
     %imgs_ransac = imread(img_name_2); %source image -- the image that will be warped
     %convert the images to double (these versions will not be used for ransac)
@@ -62,12 +68,35 @@ function [result, mask] = align_image_pair(imgd, imgs, maskd)
     % Use RANSAC to reject outliers
     %ransac_n = ??; % Max number of iterations
     %ransac_eps = ??; Acceptable alignment error
-    ransac_n = 10000;
-    ransac_eps = 2;
+    ransac_n = 100000;
+    ransac_eps = 1;
     
     [inliers_id, H_3x3] = runRANSAC(xs, xd, ransac_n, ransac_eps);
-    
-    %after_img = showCorrespondence(imgs, imgd, xs(inliers_id, :), xd(inliers_id, :));
+    %to show correspondence, there should be shifted versions of the two images and the corresponding points
+    %imgd starts at ystart and xstart. Create a version of it shifted back by ystart and xstart
+    imgd_correspondence = imgd_ransac(start_y:start_y+dest_height-1, start_x:start_x+dest_width-1, :);
+    %get a version of the destination points that is shifted back by ystart and xstart
+    xd_correspondence = xd;
+    xd_correspondence(:, 1) = xd_correspondence(:, 1) - start_x;
+    xd_correspondence(:, 2) = xd_correspondence(:, 2) - start_y;
+    %imgs is still in the top left corner of the canvas. Crop it to its original size
+    imgs_correspondence = imgs_ransac(1:source_height, 1:source_width, :);
+    after_img = showCorrespondence(imgs_correspondence, imgd_correspondence, xs(inliers_id, :), xd_correspondence(inliers_id, :));
+    %convert the image to uint8
+    after_img = im2uint8(after_img);
+    %save the image to a file in the correspondence_images folder.
+    %The name of the file should be correspondence_<num_correspondence>.png
+    %first, figure out how many correspondence images are already in the folder
+    %get the list of files in the correspondence_images folder
+    correspondence_images = dir('correspondence_images/*.png');
+    %now, get the number of files in the folder
+    num_correspondence = size(correspondence_images, 1);
+    %now, create the name of the file
+    file_name = strcat('correspondence_images/correspondence_', num2str(num_correspondence+1), '.png');
+    %print out the name of the file
+    fprintf('Saving correspondence image to file %s\n', file_name);
+    %now, save the image to the file
+    imwrite(after_img, file_name);
     %figure, imshow(after_img);
     %create the name for the output image -- the name of the first image, followed by corresponding, followed by the name of the second image
     %out_img = strcat(img_name_1, '_corresponding_', img_name_2);

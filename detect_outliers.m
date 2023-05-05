@@ -62,6 +62,15 @@ function outlier_masks = detect_outliers(aligned_images, masks, window_size, out
             window_difference_matrix(:, i, j) = abs(image_similarity_histogram_matrix(:, i, j) - window_median_matrix(i, j));
         end
     end
+    %erode and then dilate each image_to_not_use mask
+    for i = 1:num_images
+        
+        %images_to_not_use(i, :, :) = imdilate(squeeze(logical(images_to_not_use(i, :, :))), strel('disk', 3));
+        images_to_not_use(i, :, :) = imerode(squeeze(logical(images_to_not_use(i, :, :))), strel('disk', 2));
+        images_to_not_use(i, :, :) = imdilate(squeeze(logical(images_to_not_use(i, :, :))), strel('disk', 8));
+        %dilate again, but not disk
+        images_to_not_use(i, :, :) = imdilate(squeeze(logical(images_to_not_use(i, :, :))), strel('square', 6));
+    end
     %perform a moving average on the window_difference_matrix
     %window_difference_matrix = movingAverageWithoutInf(window_difference_matrix, 3);
     %for each window, check if the image_similarity_histogram is an outlier
@@ -76,7 +85,7 @@ function outlier_masks = detect_outliers(aligned_images, masks, window_size, out
                     %get the difference between the image_similarity_histogram and the window median
                     window_difference = window_difference_matrix(k, i, j);
                     %debugging: print out the window difference
-                    fprintf('window_difference: %f\n', window_difference);
+                    %fprintf('window_difference: %f\n', window_difference);
                     if abs(window_difference) > outlier_threshold
                         %debugging: print out that the image is an outlier
                         %fprintf('image %d is an outlier\n', k);
